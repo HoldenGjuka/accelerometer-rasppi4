@@ -5,6 +5,9 @@
 // This program takes in data from an accelerometer and prints the data to console.
 // Utilizes threading/multiple processes. Runs on Raspberry Pi 4 Model B Rev 1.1,
 // using the Raspbian OS.
+// TO COMPILE:
+// gcc -pthread -o a main.c
+// ./a
 
 #include <stdio.h>
 #include <stdlib.h>
