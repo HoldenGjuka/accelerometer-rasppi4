@@ -3,7 +3,8 @@
 // Instructor: Dr. Caley
 // Date: 4/21/2020
 // This program takes in data from an accelerometer and prints the data to console.
-// Utilizes threading/multiple processes. Runs on Raspberry Pi 4
+// Utilizes threading/multiple processes. Runs on Raspberry Pi 4 Model B Rev 1.1,
+// using the Raspbian OS.
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,6 +13,7 @@
 #include <time.h>
 #include <semaphore.h>
 #include <time.h>
+#include <wiringPi.h>
 
 
 const int limit = 1000;
