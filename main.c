@@ -1,7 +1,9 @@
 // Author: Holden Gjuka
 // Class: Operating Systems
 // Instructor: Dr. Caley
-// This program takes in data from an accelerometer and prints the data to console. Utilizes threading/multiple processes.
+// Date: 4/21/2020
+// This program takes in data from an accelerometer and prints the data to console.
+// Utilizes threading/multiple processes. Runs on Raspberry Pi 4
 
 #include <stdio.h>
 #include <stdlib.h>
