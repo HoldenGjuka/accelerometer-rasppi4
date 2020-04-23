@@ -4,9 +4,9 @@
 // Date: 4/21/2020
 // This program takes in data from an accelerometer and prints the data to console.
 // Utilizes threading/multiple processes. Runs on Raspberry Pi 4 Model B Rev 1.1,
-// using the Raspbian OS.
+// running the Raspbian OS.
 // TO COMPILE:
-// gcc -pthread -o a main.c
+// gcc -pthread -o a main.c -lwiringPi
 // ./a
 
 #include <stdio.h>
@@ -17,6 +17,7 @@
 #include <semaphore.h>
 #include <time.h>
 #include <wiringPi.h>
+#include <wiringPiI2C.h>
 
 
 const int limit = 1000;
@@ -81,6 +82,28 @@ void* thread_2_main(){
 }
 
 int main(){
+    int fd = wiringPiI2CSetup(0x1d);
+    int val = wiringPiI2CRead(fd);
+    //Dr. Caley, you said in lecture that int produces weird behavior but
+    //that makes no sense to me because I can't see how it would do that?
+    int x_lsb = wiringPiI2CReadReg8(fd, 1);  //least_significant_byte LSB
+    int x_msb = wiringPiI2CReadReg8(fd, 2)>>4;  //most_significant_byte MSB
+    int x_sign = x_msb>>7;
+    int y_lsb = wiringPiI2CReadReg8(fd, 3);
+    int y_msb = wiringPiI2CReadReg8(fd, 4)>>4;
+    int y_sign = y_msb>>7;
+    int z_lsb = wiringPiI2CReadReg8(fd, 5);
+    int z_msb = wiringPiI2CReadReg8(fd, 6)>>4;
+    int z_sign = z_msb>>7;
+    int x_final = ((x_msb << 4| x_lsb) ^ (x_sign<<7)) | (x_sign<<31);
+    int y_final = ((y_msb << 4| y_lsb) ^ (y_sign<<7)) | (y_sign<<31);
+    int z_final = ((z_msb << 4| z_lsb) ^ (z_sign<<7)) | (z_sign<<31);
+    if(x_sign == 1) { x_final = (x_sign<<31) | ~x_final; }
+    if(y_sign == 1) { y_final = (y_sign<<31) | ~y_final; }
+    if(z_sign == 1) { z_final = (z_sign<<31) | ~z_final; }
+    printf("x: %d, y: %d, z: %d", x_final, y_final, z_final);
+    
+
     pthread_t tid1;
     pthread_t tid2;
 
