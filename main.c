@@ -21,6 +21,8 @@
 
 
 pthread_mutex_t mutex1;
+pthread_mutex_t mutex2;
+pthread_mutex_t mutex3;
 
 //reads current x value from accelerometer
 int generate_x(int fd){
@@ -96,9 +98,11 @@ void* runner1(int *fd_ptr){
     int x_counter = 0;
     int x_vals[1000];
     while(1){
+        pthread_mutex_lock(&mutex1);
         int x = generate_x(fd);
         x_counter++;
         displayStats(x_counter, x_vals);
+        pthread_mutex_unlock(&mutex1);
     }
 }
 
@@ -108,9 +112,11 @@ void* runner2(int *fd_ptr){
     int y_counter = 0;
     int y_vals[1000];
     while(1){
+        pthread_mutex_lock(&mutex2);
         int y = generate_y(fd);
         y_counter++;
         displayStats(y_counter, y_vals);
+        pthread_mutex_unlock(&mutex2);
     }
 }
 
@@ -120,9 +126,11 @@ void* runner3(int *fd_ptr){
     int z_counter = 0;
     int z_vals[1000];
     while(1){
+        pthread_mutex_lock(&mutex3);
         int z = generate_z(fd);
         z_counter++;
         displayStats(z_counter, z_vals);
+        pthread_mutex_unlock(&mutex3);
     }
 }
 
