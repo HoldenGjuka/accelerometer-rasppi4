@@ -26,9 +26,9 @@ pthread_mutex_t mutex3;
 
 //reads current x value from accelerometer
 int generate_x(int fd){
-    int x_msb = wiringPiI2CReadReg8(fd, 1);
-    int x_lsb = wiringPiI2CReadReg8(fd, 2);
-    int x_sign = x_msb >> 7;
+    int x_msb = wiringPiI2CReadReg8(fd, 1) << 4;
+    int x_lsb = wiringPiI2CReadReg8(fd, 2) >> 4;
+    int x_sign = x_msb >> 11;
     int x_final = x_msb | x_lsb;
     if(x_sign == 1) { x_final = 0xFFFFF000 | x_final; }
     return x_final;
@@ -46,8 +46,8 @@ int generate_y(int fd){
 
 //reads current z value from accelerometer
 int generate_z(int fd){
-    int z_msb = wiringPiI2CReadReg8(fd, 5);
-    int z_lsb = wiringPiI2CReadReg8(fd, 6);
+    int z_msb = wiringPiI2CReadReg8(fd, 5) << 4;
+    int z_lsb = wiringPiI2CReadReg8(fd, 6) >> 4;
     int z_sign = z_msb >> 7;
     int z_final = z_msb | z_lsb;
     if(z_sign == 1) { z_final = 0xFFFFF000 | z_final; }
