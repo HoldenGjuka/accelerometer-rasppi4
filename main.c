@@ -48,7 +48,7 @@ int generate_y(int fd){
 int generate_z(int fd){
     int z_msb = wiringPiI2CReadReg8(fd, 5) << 4;
     int z_lsb = wiringPiI2CReadReg8(fd, 6) >> 4;
-    int z_sign = z_msb >> 7;
+    int z_sign = z_msb >> 11;
     int z_final = z_msb | z_lsb;
     if(z_sign == 1) { z_final = 0xFFFFF000 | z_final; }
     return z_final;
@@ -151,4 +151,9 @@ int main(){
     pthread_create(&tid1, &attr, (void*) &runner1, fd_ptr);
     pthread_create(&tid2, &attr, (void*) &runner2, fd_ptr);
     pthread_create(&tid3, &attr, (void*) &runner3, fd_ptr);
+
+
+    pthread_join(tid1, NULL);
+    pthread_join(tid2, NULL);
+    pthread_join(tid3, NULL);
 }
