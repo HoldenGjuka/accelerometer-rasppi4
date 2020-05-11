@@ -15,7 +15,6 @@
 #include <pthread.h>
 #include <time.h>
 #include <semaphore.h>
-#include <time.h>
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
 
@@ -26,31 +25,31 @@ pthread_mutex_t mutex3;
 
 //reads current x value from accelerometer
 int generate_x(int fd){
-    int x_lsb = wiringPiI2CReadReg8(fd, 1);  //least_significant_byte LSB
-    int x_msb = wiringPiI2CReadReg8(fd, 2)>>4;  //most_significant_byte MSB
-    int x_sign = x_msb>>7;
-    int x_final = ((x_msb << 4| x_lsb) ^ (x_sign<<7)) | (x_sign<<31);
-    if(x_sign == 1) { x_final = (x_sign<<31) | ~x_final; }
+    int x_msb = wiringPiI2CReadReg8(fd, 1);
+    int x_lsb = wiringPiI2CReadReg8(fd, 2);
+    int x_sign = x_msb>>11;
+    int x_final = x_msb | x_lsb;
+    if(x_sign == 1) { x_final = 0xFFFFF000 | x_final; }
     return x_final;
 }
 
 //reads current y value from accelerometer
 int generate_y(int fd){
-    int y_lsb = wiringPiI2CReadReg8(fd, 3);
-    int y_msb = wiringPiI2CReadReg8(fd, 4)>>4;
-    int y_sign = y_msb>>7;
-    int y_final = ((y_msb << 4| y_lsb) ^ (y_sign<<7)) | (y_sign<<31);
-    if(y_sign == 1) { y_final = (y_sign<<31) | ~y_final; }
+    int y_msb = wiringPiI2CReadReg8(fd, 3);
+    int y_lsb = wiringPiI2CReadReg8(fd, 4);
+    int y_sign = y_msb>>11;
+    int y_final = y_msb | y_lsb;
+    if(y_sign == 1) { y_final = 0xFFFFF000 | y_final; }
     return y_final;
 }
 
 //reads current z value from accelerometer
 int generate_z(int fd){
-    int z_lsb = wiringPiI2CReadReg8(fd, 5);
-    int z_msb = wiringPiI2CReadReg8(fd, 6)>>4;
-    int z_sign = z_msb>>7;
-    int z_final = ((z_msb << 4| z_lsb) ^ (z_sign<<7)) | (z_sign<<31);
-    if(z_sign == 1) { z_final = (z_sign<<31) | ~z_final; }
+    int z_msb = wiringPiI2CReadReg8(fd, 5);
+    int z_lsb = wiringPiI2CReadReg8(fd, 6);
+    int z_sign = z_msb>>11;
+    int z_final = z_msb | z_lsb;
+    if(z_sign == 1) { z_final = 0xFFFFF000 | z_final; }
     return z_final;
 }
 
