@@ -6,9 +6,9 @@
 // to console. Utilizes threading. Runs on Raspberry Pi 4 Model B Rev 
 // 1.1, running the Raspbian OS.
 // TO COMPILE:
-// gcc -pthread -o a main.c -lwiringPi
+// gcc -pthread -o a.out main.c -lwiringPi
 // TO RUN:
-// ./a
+// ./a.out
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,7 +28,7 @@ pthread_mutex_t mutex3;
 int generate_x(int fd){
     int x_msb = wiringPiI2CReadReg8(fd, 1);
     int x_lsb = wiringPiI2CReadReg8(fd, 2);
-    int x_sign = x_msb >> 11;
+    int x_sign = x_msb >> 7;
     int x_final = x_msb | x_lsb;
     if(x_sign == 1) { x_final = 0xFFFFF000 | x_final; }
     return x_final;
@@ -36,8 +36,8 @@ int generate_x(int fd){
 
 //reads current y value from accelerometer
 int generate_y(int fd){
-    int y_msb = wiringPiI2CReadReg8(fd, 3);
-    int y_lsb = wiringPiI2CReadReg8(fd, 4);
+    int y_msb = wiringPiI2CReadReg8(fd, 3) << 4;
+    int y_lsb = wiringPiI2CReadReg8(fd, 4) >> 4;
     int y_sign = y_msb >> 11;
     int y_final = y_msb | y_lsb;
     if(y_sign == 1) { y_final = 0xFFFFF000 | y_final; }
@@ -48,7 +48,7 @@ int generate_y(int fd){
 int generate_z(int fd){
     int z_msb = wiringPiI2CReadReg8(fd, 5);
     int z_lsb = wiringPiI2CReadReg8(fd, 6);
-    int z_sign = z_msb >> 11;
+    int z_sign = z_msb >> 7;
     int z_final = z_msb | z_lsb;
     if(z_sign == 1) { z_final = 0xFFFFF000 | z_final; }
     return z_final;
@@ -151,7 +151,4 @@ int main(){
     pthread_create(&tid1, &attr, (void*) &runner1, fd_ptr);
     pthread_create(&tid2, &attr, (void*) &runner2, fd_ptr);
     pthread_create(&tid3, &attr, (void*) &runner3, fd_ptr);
-
-    pthread_join(tid1, NULL);
-    pthread_join(tid2, NULL);
 }
