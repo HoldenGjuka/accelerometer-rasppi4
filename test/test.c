@@ -6,14 +6,13 @@
 #include <stdint.h>
 
 int main(){
-    short x_msb = 0x00 << 4;
-    short x_lsb = 0xF0 >> 4;
-    short x_sign = x_msb >> 11;
-    short x_final = x_msb | x_lsb;
-    if(x_sign == 1) { x_final = (x_sign << 15) | ~x_final; }
-    printf("x_msb: %hi\n", x_msb);
-    printf("x_lsb: %hi\n", x_lsb);
+    int x_msb = 0x00F8;
+    int x_lsb = 0x0010;
+    int x_sign = x_msb >> 7;
+    int x_final = (x_msb << 4) | (x_lsb >> 4);
+    printf("size of int %d\n", sizeof(int));
+    //x_final = 0xFF81;  //-127
+    printf("x_final: %08x\n", x_final);
     printf("x_final: %hi\n", x_final);
-    printf("x_sign: %hi\n", x_sign);
     return 0;
 }
