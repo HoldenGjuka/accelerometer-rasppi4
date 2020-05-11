@@ -1,4 +1,5 @@
 //Tests bit shifting
+//size of int is 4 bytes
 #include <unistd.h>
 #include <pthread.h>
 #include <stdio.h>
@@ -6,13 +7,15 @@
 #include <stdint.h>
 
 int main(){
-    int x_msb = 0x00F8;
-    int x_lsb = 0x0010;
-    int x_sign = x_msb >> 7;
-    int x_final = (x_msb << 4) | (x_lsb >> 4);
-    printf("size of int %d\n", sizeof(int));
-    //x_final = 0xFF81;  //-127
-    printf("x_final: %08x\n", x_final);
-    printf("x_final: %hi\n", x_final);
+    int z_msb = 0x80 << 4;
+    int z_lsb = 0x10 >> 4;
+    printf("z_msb: %08x\n", z_msb);
+    int z_sign = z_msb>>11;
+    printf("z_sign: %08x\n", z_sign);
+    int z_final = z_msb | z_lsb;
+    printf("x_final: %08x\n", z_final);
+    if(z_sign == 1) { z_final = 0xFFFFF000 | z_final; }
+    printf("x_final: %08x\n", z_final);
+    printf("x_final: %d\n", z_final);
     return 0;
 }
