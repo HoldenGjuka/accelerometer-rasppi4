@@ -30,7 +30,8 @@ int generate_x(int fd){
     int x_lsb = wiringPiI2CReadReg8(fd, 2) >> 4;
     int x_sign = x_msb >> 11;
     int x_final = x_msb | x_lsb;
-    if(x_sign == 1) { x_final = 0xFFFFF000 | x_final; }
+    x_final = x_final << 20;
+    x_final = x_final >> 20;
     return x_final;
 }
 
@@ -40,7 +41,8 @@ int generate_y(int fd){
     int y_lsb = wiringPiI2CReadReg8(fd, 4) >> 4;
     int y_sign = y_msb >> 11;
     int y_final = y_msb | y_lsb;
-    if(y_sign == 1) { y_final = 0xFFFFF000 | y_final; }
+    y_final = y_final << 20;
+    y_final = y_final >> 20;
     return y_final;
 }
 
@@ -50,7 +52,8 @@ int generate_z(int fd){
     int z_lsb = wiringPiI2CReadReg8(fd, 6) >> 4;
     int z_sign = z_msb >> 11;
     int z_final = z_msb | z_lsb;
-    if(z_sign == 1) { z_final = 0xFFFFF000 | z_final; }
+    z_final = z_final << 20;
+    z_final = z_final >> 20;
     return z_final;
 }
 
@@ -155,5 +158,4 @@ int main(){
 
     pthread_join(tid1, NULL);
     pthread_join(tid2, NULL);
-    pthread_join(tid3, NULL);
 }
