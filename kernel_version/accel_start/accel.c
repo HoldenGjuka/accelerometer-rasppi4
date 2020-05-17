@@ -25,6 +25,11 @@ static int __init accel_init(void) {
 	s32 whoAmIResult;
 	s32 xAxisValue;
 	char *dirname;
+	char *fs;
+	char *parent;
+	struct kobject *example_kobject;
+	struct kobject fs_kobject;
+	struct kobject *parent_kobject;
 	//int fd;
 
 	printk(KERN_DEBUG "accelerometer init\n");
@@ -47,8 +52,13 @@ static int __init accel_init(void) {
 	printk(KERN_DEBUG "x-axis value: 0x%x\n", xAxisValue);
 	
     dirname = "test_dir_TEST";
-
-    struct kobject *example_kobject;
+	
+	//make parent kobject for fs folder (sys/fs)
+	fs = "fs";
+	parent = "sys";
+	fs_kobject = {fs, parent};
+	parent_kobject = &fs_kobject;
+    
 	example_kobject = kobject_create_and_add(dirname, NULL);
 
 	//fd = open("sys/fs/test_dir_TEST", O_WRONLY);
