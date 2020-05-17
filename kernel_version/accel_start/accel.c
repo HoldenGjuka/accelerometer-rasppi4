@@ -30,7 +30,6 @@ static int __init accel_init(void) {
 	struct kobject *example_kobject;
 	struct kobject fs_kobject;
 	struct kobject *parent_kobject;
-	//int fd;
 
 	printk(KERN_DEBUG "accelerometer init\n");
 
@@ -59,11 +58,11 @@ static int __init accel_init(void) {
 	fs_kobject = {fs, parent};
 	parent_kobject = &fs_kobject;
     
-	example_kobject = kobject_create_and_add(dirname, NULL);
-	kobject_del(example_kobject);
+	example_kobject = kobject_create_and_add(dirname, parent_kobject);
 
-exit:
-	return 0;
+	exit:
+		kobject_del(example_kobject);
+		return 0;
 }
 
 static void __exit accel_exit(void){
