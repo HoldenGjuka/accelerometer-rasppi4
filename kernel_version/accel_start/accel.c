@@ -59,7 +59,7 @@ static int __init accel_init(void) {
 	fs_kobject = {fs, parent};
 	parent_kobject = &fs_kobject;
     
-	example_kobject = kobject_create_and_add(dirname, NULL);
+	example_kobject = kobject_create_and_add(dirname, fs_kobject);
 
 	//fd = open("sys/fs/test_dir_TEST", O_WRONLY);
 
