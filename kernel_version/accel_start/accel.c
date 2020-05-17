@@ -36,7 +36,21 @@ static int __init accel_init(void) {
 	i2c_smbus_write_byte_data(i2c_client, 0x2A, 0x01);
 	whoAmIResult = i2c_smbus_read_byte_data(i2c_client, 0x0D);
 	printk(KERN_DEBUG "who am I result: 0x%x\n", whoAmIResult);
+	int fd;
 
+	int check;
+    char* dirname = "test_dir_TEST";
+
+    check = mkdir(dirname);
+
+    // check if directory is created or not
+    if (!check)
+        printf("Directory created\n");
+    else {
+        printf("Unable to create directory\n");
+        exit(1);
+    }
+	//fd = open("sys/fs/test_dir_TEST", O_WRONLY);
 	xAxisValue = i2c_smbus_read_byte_data(i2c_client, 0x01);
 	printk(KERN_DEBUG "x-axis value: 0x%x\n", xAxisValue);
 
