@@ -51,12 +51,6 @@ static int __init accel_init(void) {
     struct kobject *example_kobject;
 	example_kobject = kobject_create_and_add(dirname, NULL);
 
-    if (!check) // check if directory is created or not
-        printk(KERN_INFO "Directory created\n");
-    else {
-        printk(KERN_INFO "Unable to create directory\n");
-        goto exit;
-    }
 	//fd = open("sys/fs/test_dir_TEST", O_WRONLY);
 
 exit:
