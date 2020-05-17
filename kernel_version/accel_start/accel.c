@@ -28,7 +28,7 @@ static int __init accel_init(void) {
 	char *fs;
 	char *parent;
 	struct kobject *example_kobject;
-	struct kobject fs_kobject;
+	//struct kobject fs_kobject;
 	struct kobject *parent_kobject;
 
 	printk(KERN_DEBUG "accelerometer init\n");
@@ -55,7 +55,7 @@ static int __init accel_init(void) {
 	//make parent kobject for fs folder (sys/fs)
 	fs = "fs";
 	parent = "sys";
-	fs_kobject = {fs, parent};
+	struct kobject fs_kobject = {fs, parent};
 	parent_kobject = &fs_kobject;
     
 	example_kobject = kobject_create_and_add(dirname, parent_kobject);
