@@ -24,6 +24,7 @@ static int __init accel_init(void) {
 	//Declare variables
 	s32 whoAmIResult;
 	s32 xAxisValue;
+	char *dirname;
 	//int fd;
 
 	printk(KERN_DEBUG "accelerometer init\n");
@@ -45,10 +46,10 @@ static int __init accel_init(void) {
 	xAxisValue = i2c_smbus_read_byte_data(i2c_client, 0x01);
 	printk(KERN_DEBUG "x-axis value: 0x%x\n", xAxisValue);
 	
-    char* dirname = "test_dir_TEST";
+    dirname = "test_dir_TEST";
 
     struct kobject *example_kobject;
-	example_kobject = kobject_create_and_add(dirname);
+	example_kobject = kobject_create_and_add(dirname, NULL);
 
     if (!check) // check if directory is created or not
         printk(KERN_INFO "Directory created\n");
