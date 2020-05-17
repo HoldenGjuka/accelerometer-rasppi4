@@ -24,7 +24,7 @@ static int __init accel_init(void) {
 	//Declare variables
 	s32 whoAmIResult;
 	s32 xAxisValue;
-	int fd;
+	//int fd;
 
 	printk(KERN_DEBUG "accelerometer init\n");
 
@@ -48,7 +48,7 @@ static int __init accel_init(void) {
     char* dirname = "test_dir_TEST";
 
     struct kobject *example_kobject;
-	example_kobject = kobject_create_and_add(dirname)
+	example_kobject = kobject_create_and_add(dirname);
 
     if (!check) // check if directory is created or not
         printk(KERN_INFO "Directory created\n");
