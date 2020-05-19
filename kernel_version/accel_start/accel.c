@@ -26,10 +26,6 @@ static int __init accel_init(void) {
 	s32 xAxisValue;
 	char *dirname;
 	char *fs;
-	char *parent;
-	struct kobject *example_kobject;
-	//struct kobject fs_kobject;
-	struct kobject *parent_kobject;
 
 	printk(KERN_DEBUG "accelerometer init\n");
 
@@ -50,16 +46,16 @@ static int __init accel_init(void) {
 	xAxisValue = i2c_smbus_read_byte_data(i2c_client, 0x01);
 	printk(KERN_DEBUG "x-axis value: 0x%x\n", xAxisValue);
 	
-    dirname = "test_dir_TEST";
+    dirname = "TESTDIRECTORY";
 	
 	//make parent kobject for fs folder (sys/fs)
-	fs = "fs";
-	parent = "sys";
-	struct kobject fs_kobject = {fs, parent};
-	parent_kobject = &fs_kobject;
-    
-	example_kobject = kobject_create_and_add(dirname, parent_kobject);
-
+	// fs = "fs";
+	// parent = "sys";
+	static struct kobject *test_kobj;
+	test_kobj = kobject_create_and_add(dirname, kernel_kobj);
+	//container_of(pointer, type, member);
+	//#define to_map(map) container_of(map, struct uio_map, kobj)
+	//struct uio_map *map = to_map(kobj);
 	exit:
 		kobject_del(example_kobject);
 		return 0;
