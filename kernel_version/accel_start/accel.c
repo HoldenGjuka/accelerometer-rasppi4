@@ -57,7 +57,7 @@ static int __init accel_init(void) {
 	//#define to_map(map) container_of(map, struct uio_map, kobj)
 	//struct uio_map *map = to_map(kobj);
 	exit:
-		kobject_del(example_kobject);
+		//kobject_del(example_kobject);
 		return 0;
 }
 
