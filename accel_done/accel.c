@@ -11,9 +11,7 @@ struct i2c_adapter* i2c_dev;
 struct i2c_client* i2c_client;
 
 static struct i2c_board_info __initdata board_info[] =  {
-	{
-		I2C_BOARD_INFO("MMA8452Q", 0x1d),
-	}
+	{ I2C_BOARD_INFO("MMA8452Q", 0x1d), }
 };
 
 enum { FOO_SIZE_MAX = 4 };
@@ -21,7 +19,7 @@ static int foo_size;
 static char foo_tmp[FOO_SIZE_MAX];
 
 //This is a function that will handle the file read request
-static ssize_t foo_show(struct kobject *kobj, struct kobj_attribute *attr,
+static ssize_t read_data(struct kobject *kobj, struct kobj_attribute *attr,
         char *buff)
 {
     //this will just copy the internal kernel buffer over to the buffer provided by the userspace program
@@ -31,7 +29,7 @@ static ssize_t foo_show(struct kobject *kobj, struct kobj_attribute *attr,
 }
 
 //This is a function that will handle the file write request
-static ssize_t foo_store(struct  kobject *kobj, struct kobj_attribute *attr,
+static ssize_t store_data(struct  kobject *kobj, struct kobj_attribute *attr,
         const char *buff, size_t count)
 {
     //this kernel object only stores FOO_SIZE_MAX bytes, figure out which is smaller, FOO_SIZE_MAX or the data written to this file from userspace
@@ -42,17 +40,17 @@ static ssize_t foo_store(struct  kobject *kobj, struct kobj_attribute *attr,
 }
 
 //This is the actual attribute definition, this is being used to define the file name, and the READ/WRITE capabilities
-static struct kobj_attribute foo_attribute =
-    __ATTR(foo, S_IRUGO | S_IWUSR, foo_show, foo_store);
+static struct kobj_attribute x_attribute =
+    __ATTR(x, S_IRUGO | S_IWUSR, read_data, store_data);
         //foo is the file name
         // S_IRUGO means it is readable by owner, group and all users
         // S_IWUSR means it is writable by the owner
         // foo_show is the function pointer to the function used to handle a file read request
-        // foo_store is teh function pointer to the function used to handle a file write request
+        // foo_store is the function pointer to the function used to handle a file write request
 
 //This is an array of attributes, this only defines a single one, but you can add more
 static struct attribute *attrs[] = {
-    &foo_attribute.attr,
+    &x_attribute.attr,
     //&some_other_attribute.attr, //like this - HINT HINT
     NULL,
 };
@@ -90,7 +88,7 @@ static int __init accel_init(void) {
 
 	int ret;
 
-    kobj = kobject_create_and_add("lkmc_sysfs", kernel_kobj);
+    kobj = kobject_create_and_add("accel_data", kernel_kobj);
     if (!kobj)
         return -ENOMEM;
     ret = sysfs_create_group(kobj, &attr_group);
