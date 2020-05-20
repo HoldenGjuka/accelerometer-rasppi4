@@ -1,7 +1,7 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
+
 #include <linux/i2c.h>
-#include <linux/kobject.h>
 
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Quiic Accelerometer Sysfs Module");
@@ -10,10 +10,6 @@ MODULE_VERSION("0.1");
 struct i2c_adapter* i2c_dev;
 struct i2c_client* i2c_client;
 
-//NOTES:
-//will need a separate file for each value, with only one value.
-//Thus the module is dumb, does not perform analysis of any sort.
-
 static struct i2c_board_info __initdata board_info[] =  {
 	{
 		I2C_BOARD_INFO("MMA8452Q", 0x1d),
@@ -21,11 +17,8 @@ static struct i2c_board_info __initdata board_info[] =  {
 };
 
 static int __init accel_init(void) {
-	//Declare variables
 	s32 whoAmIResult;
 	s32 xAxisValue;
-	char *dirname;
-	char *fs;
 
 	printk(KERN_DEBUG "accelerometer init\n");
 
@@ -43,22 +36,12 @@ static int __init accel_init(void) {
 	i2c_smbus_write_byte_data(i2c_client, 0x2A, 0x01);
 	whoAmIResult = i2c_smbus_read_byte_data(i2c_client, 0x0D);
 	printk(KERN_DEBUG "who am I result: 0x%x\n", whoAmIResult);
+
 	xAxisValue = i2c_smbus_read_byte_data(i2c_client, 0x01);
 	printk(KERN_DEBUG "x-axis value: 0x%x\n", xAxisValue);
-	
-    dirname = "TESTDIRECTORY";
-	
-	//make parent kobject for fs folder (sys/fs)
-	// fs = "fs";
-	// parent = "sys";
-	static struct kobject *test_kobj;
-	test_kobj = kobject_create_and_add(dirname, kernel_kobj);
-	//container_of(pointer, type, member);
-	//#define to_map(map) container_of(map, struct uio_map, kobj)
-	//struct uio_map *map = to_map(kobj);
-	exit:
-		//kobject_del(example_kobject);
-		return 0;
+
+exit:
+	return 0;
 }
 
 static void __exit accel_exit(void){
