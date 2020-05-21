@@ -9,9 +9,6 @@ MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Quiic Accelerometer Sysfs Module");
 MODULE_VERSION("0.1");
 
-struct i2c_adapter* i2c_dev;
-struct i2c_client* i2c_client;
-
 static struct i2c_board_info __initdata board_info[] =  {
 	{ I2C_BOARD_INFO("MMA8452Q", 0x1d), }
 };
@@ -37,8 +34,6 @@ static ssize_t store_data(struct  kobject *kobj, struct kobj_attribute *attr,
     return count;
 }
 
-static struct task_struct *thread_st;
-// Function executed by kernel thread
 static int thread_fn(void *i2c_client)
 {
     int x_msb, x_lsb, x_sign, x_final;
@@ -52,6 +47,7 @@ static int thread_fn(void *i2c_client)
         x_final = x_final << 20;
         x_final = x_final >> 20;
 	    printk(KERN_DEBUG "x-axis value: 0x%x\n", x_final);
+        
         ssleep(5);
         if(kthread_should_stop()) break;
     }
@@ -85,12 +81,15 @@ static int __init accel_init(void) {
 	s32 whoAmIResult;
 	s32 xAxisValue;
     //INITIALIZE ADAPTOR CONNECTION
+    struct i2c_adapter* i2c_dev;
 	printk(KERN_DEBUG "accelerometer init\n");
 	i2c_dev = i2c_get_adapter(1);
 	if(!i2c_dev) {
 		printk(KERN_INFO "FAIL: could not get i2c adapter\n");
 		goto exit;
 	}
+    //INITIALIZE I2C CLIENT
+    struct i2c_client* i2c_client;
 	i2c_client = i2c_new_device(i2c_dev, board_info);
 	if(!i2c_client) {
 		printk(KERN_INFO "FAIL: could not get i2c client\n");
@@ -100,17 +99,21 @@ static int __init accel_init(void) {
 	i2c_smbus_write_byte_data(i2c_client, 0x2A, 0x01);
 	whoAmIResult = i2c_smbus_read_byte_data(i2c_client, 0x0D);
 	printk(KERN_DEBUG "who am I result: 0x%x\n", whoAmIResult);
-
-	int ret;
+    //CREATE KOBJECT GROUP
     kobj = kobject_create_and_add("accel_data", kernel_kobj);
     if (!kobj)
         return -ENOMEM;
+    int ret;
     ret = sysfs_create_group(kobj, &attr_group);
     if (ret)
         kobject_put(kobj);
-    
+    //TEST WRITE TO X
+    char test_input[10];
+    test_input = "test";
+    store_data(kobj, attr_group[0], &test_input, sizeof(test_input));
     //CREATE THREAD
     printk(KERN_INFO "Creating Thread\n");
+    static struct task_struct *thread_st;
     thread_st = kthread_run(thread_fn, i2c_client, "x_thread");
     if (thread_st)
         printk(KERN_INFO "Thread Created successfully\n");

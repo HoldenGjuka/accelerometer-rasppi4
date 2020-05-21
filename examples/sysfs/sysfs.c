@@ -53,7 +53,6 @@ static struct kobject *kobj;
 static int myinit(void)
 {
     int ret;
-
     kobj = kobject_create_and_add("lkmc_sysfs", kernel_kobj);
     if (!kobj)
         return -ENOMEM;
