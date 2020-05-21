@@ -41,12 +41,17 @@ static struct task_struct *thread_st;
 // Function executed by kernel thread
 static int thread_fn(void *i2c_client)
 {
-    int xAxisValue;
+    int x_msb, x_lsb, x_sign, x_final;
     while (1)
     {
         //TEST ACCELEROMETER READ
-	    xAxisValue = i2c_smbus_read_byte_data(i2c_client, 0x01);
-	    printk(KERN_DEBUG "x-axis value: 0x%x\n", xAxisValue);
+        int x_msb = i2c_smbus_read_byte_data(i2c_client, 0x01); << 4;
+        int x_lsb = i2c_smbus_read_byte_data(i2c_client, 0x02); >> 4;
+        int x_sign = x_msb >> 11;
+        int x_final = x_msb | x_lsb;
+        x_final = x_final << 20;
+        x_final = x_final >> 20;
+	    printk(KERN_DEBUG "x-axis value: 0x%x\n", x_final);
         ssleep(5);
         if(kthread_should_stop()) break;
     }
