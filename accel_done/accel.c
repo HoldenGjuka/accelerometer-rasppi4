@@ -2,6 +2,8 @@
 #include <linux/module.h>
 #include <linux/kobject.h>
 #include <linux/i2c.h>
+#include <linux/kthread.h>
+#include <linux/delay.h>
 
 MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Quiic Accelerometer Sysfs Module");
@@ -39,11 +41,14 @@ static struct task_struct *thread_st;
 // Function executed by kernel thread
 static int thread_fn(void *i2c_client)
 {
+    int xAxisValue;
     while (1)
     {
         //TEST ACCELEROMETER READ
 	    xAxisValue = i2c_smbus_read_byte_data(i2c_client, 0x01);
 	    printk(KERN_DEBUG "x-axis value: 0x%x\n", xAxisValue);
+        ssleep(5);
+        if(kthread_should_stop()) break;
     }
     printk(KERN_INFO "Thread Stopping\n");
     return 0;
