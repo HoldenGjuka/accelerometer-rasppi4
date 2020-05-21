@@ -9,6 +9,9 @@ MODULE_LICENSE("GPL");
 MODULE_DESCRIPTION("Quiic Accelerometer Sysfs Module");
 MODULE_VERSION("0.1");
 
+static struct task_struct *thread_st;
+struct i2c_client* i2c_client;
+
 static struct i2c_board_info __initdata board_info[] =  {
 	{ I2C_BOARD_INFO("MMA8452Q", 0x1d), }
 };
@@ -40,10 +43,10 @@ static int thread_fn(void *i2c_client)
     while (1)
     {
         //TEST ACCELEROMETER READ
-        int x_msb = i2c_smbus_read_byte_data(i2c_client, 0x01) << 4;
-        int x_lsb = i2c_smbus_read_byte_data(i2c_client, 0x02) >> 4;
-        int x_sign = x_msb >> 11;
-        int x_final = x_msb | x_lsb;
+        x_msb = i2c_smbus_read_byte_data(i2c_client, 0x01) << 4;
+        x_lsb = i2c_smbus_read_byte_data(i2c_client, 0x02) >> 4;
+        x_sign = x_msb >> 11;
+        x_final = x_msb | x_lsb;
         x_final = x_final << 20;
         x_final = x_final >> 20;
 	    printk(KERN_DEBUG "x-axis value: 0x%x\n", x_final);
@@ -89,7 +92,6 @@ static int __init accel_init(void) {
 		goto exit;
 	}
     //INITIALIZE I2C CLIENT
-    struct i2c_client* i2c_client;
 	i2c_client = i2c_new_device(i2c_dev, board_info);
 	if(!i2c_client) {
 		printk(KERN_INFO "FAIL: could not get i2c client\n");
@@ -108,12 +110,12 @@ static int __init accel_init(void) {
     if (ret)
         kobject_put(kobj);
     //TEST WRITE TO X
-    char test_input[10];
+    char *test_input;
     test_input = "test";
     store_data(kobj, attr_group[0], &test_input, sizeof(test_input));
     //CREATE THREAD
     printk(KERN_INFO "Creating Thread\n");
-    static struct task_struct *thread_st;
+    
     thread_st = kthread_run(thread_fn, i2c_client, "x_thread");
     if (thread_st)
         printk(KERN_INFO "Thread Created successfully\n");
