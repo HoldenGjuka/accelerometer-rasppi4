@@ -45,8 +45,8 @@ static int thread_fn(void *i2c_client)
     while (1)
     {
         //TEST ACCELEROMETER READ
-        int x_msb = i2c_smbus_read_byte_data(i2c_client, 0x01); << 4;
-        int x_lsb = i2c_smbus_read_byte_data(i2c_client, 0x02); >> 4;
+        int x_msb = i2c_smbus_read_byte_data(i2c_client, 0x01) << 4;
+        int x_lsb = i2c_smbus_read_byte_data(i2c_client, 0x02) >> 4;
         int x_sign = x_msb >> 11;
         int x_final = x_msb | x_lsb;
         x_final = x_final << 20;
