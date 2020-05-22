@@ -104,8 +104,8 @@ void* runner1(int *fd_ptr){
         pthread_mutex_lock(&mutex1);
         int x = generate_x(fd);
         printf("x: %d\n", x);
-        // x_counter++;
-        // displayStats(x_counter, x_vals);
+        x_counter++;
+        displayStats(x_counter, x_vals);
         pthread_mutex_unlock(&mutex1);
     }
 }
@@ -119,8 +119,8 @@ void* runner2(int *fd_ptr){
         pthread_mutex_lock(&mutex2);
         int y = generate_y(fd);
         printf("y: %d\n", y);
-        // y_counter++;
-        // displayStats(y_counter, y_vals);
+        y_counter++;
+        displayStats(y_counter, y_vals);
         pthread_mutex_unlock(&mutex2);
     }
 }
@@ -134,8 +134,8 @@ void* runner3(int *fd_ptr){
         pthread_mutex_lock(&mutex3);
         int z = generate_z(fd);
         printf("z: %d\n", z);
-        // z_counter++;
-        // displayStats(z_counter, z_vals);
+        z_counter++;
+        displayStats(z_counter, z_vals);
         pthread_mutex_unlock(&mutex3);
     }
 }
