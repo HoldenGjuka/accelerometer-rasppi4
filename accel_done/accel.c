@@ -111,7 +111,7 @@ static int __init accel_init(void) {
     if (ret)
         kobject_put(kobj);
     //TEST WRITE TO X
-    char buffer [4096];
+    const char buffer[4096];
     int cx;
     cx = snprintf ( buffer, 4096, "test");
     if ( cx >= 0 && cx < 4096)
