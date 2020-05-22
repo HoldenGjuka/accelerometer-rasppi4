@@ -117,7 +117,7 @@ static int __init accel_init(void) {
     if ( cx >= 0 && cx < 4096)
         snprintf(buffer + cx, 4096 - cx, "test");
     puts(buffer);
-    store_data(kobj, *attr_group[0], &buffer, sizeof(buffer));
+    store_data(kobj, *attr_group[0], buffer, sizeof(buffer));
     //CREATE THREAD
     printk(KERN_INFO "Creating Thread\n");
     thread_st = kthread_run(thread_fn, i2c_client, "x_thread");
