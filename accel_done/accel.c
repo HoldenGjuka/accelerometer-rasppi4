@@ -50,6 +50,7 @@ static int thread_fn(void *i2c_client)
         x_final = x_final << 20;
         x_final = x_final >> 20;
 	    printk(KERN_DEBUG "x-axis value: 0x%x\n", x_final);
+        //WRITE TO FILE
         
         ssleep(5);
         if(kthread_should_stop()) break;
@@ -110,12 +111,15 @@ static int __init accel_init(void) {
     if (ret)
         kobject_put(kobj);
     //TEST WRITE TO X
-    char *test_input;
-    test_input = "test";
-    store_data(kobj, attr_group[0], &test_input, sizeof(test_input));
+    char buffer [4096];
+    int cx;
+    cx = snprintf ( buffer, 4096, "test");
+    if ( cx >= 0 && cx < 4096)
+        snprintf(buffer + cx, 4096 - cx, "test");
+    puts(buffer);
+    store_data(kobj, *attr_group[0], &buffer, sizeof(buffer));
     //CREATE THREAD
     printk(KERN_INFO "Creating Thread\n");
-    
     thread_st = kthread_run(thread_fn, i2c_client, "x_thread");
     if (thread_st)
         printk(KERN_INFO "Thread Created successfully\n");
